@@ -205,3 +205,31 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ==========================================
+# OpenContentBot Specific
+# ==========================================
+
+# Ignore generated media assets to keep the repository lightweight
+# and avoid accidental copyright issues during testing.
+outputs/
+*.mp4
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Ignore local data caches and temporary scraping results.
+data/*.json
+data/*.csv
+data/*.xml
+
+# Security: Ensure sensitive API keys and local environment 
+# variables are never pushed to version control.
+.env
+.env.*
+secrets.yaml
+
+# Ignore OS-specific metadata files
+.DS_Store
+Thumbs.db
