@@ -9,15 +9,22 @@ niche: "finance" # 也可以是 fashion, sports, etc.
 # 流程开关
 pipeline:
   enable_ingestor: true
-  enable_image_gen: true
+  enable_image_gen: false
   enable_video_gen: false
   enable_publisher: false
 
 # 模块具体参数
 modules:
   ingestor:
-    source: "google_trends"
-    count: 3
+    enable_rss: true
+    enable_trends: false
+    rss_urls:
+      - "https://feeds.bbci.co.uk/news/technology/rss.xml"
+      - "https://news.ycombinator.com/rss"
+    keywords:
+      - "AI"
+      - "Tesla"
+      - "Market"
   
   processor:
     engine: "gpt-4"
