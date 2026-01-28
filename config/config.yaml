@@ -1,39 +1,50 @@
 # OpenContentBot 全局配置
 
-# 运行模式: manual (手动输入), auto (抓取热点)
-app_mode: "manual"
+# 运行模式: manual (手动输入), auto (自动抓取)
+app_mode: "auto"
 
 # 目标领域
-niche: "finance" # 也可以是 fashion, sports, etc.
+niche: "finance"
 
-# 流程开关
+# 1. 流程开关
 pipeline:
   enable_ingestor: true
-  enable_image_gen: false
+  enable_image_gen: true
   enable_video_gen: false
   enable_publisher: false
 
-# 模块具体参数
+# 2. 模块具体参数
 modules:
   ingestor:
     enable_rss: true
-    enable_trends: false
+    enable_trends: true
     rss_urls:
       - "https://feeds.bbci.co.uk/news/technology/rss.xml"
       - "https://news.ycombinator.com/rss"
-    keywords:
-      - "AI"
-      - "Tesla"
-      - "Market"
+    keywords: ["AI", "Tesla", "Market", "Crypto"]
   
+  # --- Processor: AI 逻辑处理层 ---
   processor:
-    engine: "gpt-4"
-    tone: "professional but engaging"
+    # 彻底解耦：通过此字段决定加载 core/providers/ 下的哪个适配器
+    provider: "openai"  # 可选: "openai", "gemini", "deepseek"
+    model: "gpt-4o-mini"
+    temperature: 0.7
     language: "zh-CN"
+    
+    # 系统提示词：决定了 AI 的输出格式和灵魂
+    system_prompt: |
+      你是一个全自动社交媒体运营机器人。请根据提供的原始新闻或热点，生成结构化的发布内容。
+      返回格式必须是 JSON，包含以下字段：
+      - caption: 吸引人的推文文案，包含 Emoji 和适当的分段。
+      - image_prompt: 用于 AI 绘画工具（如 DALL-E 或 SD）的英文提示词，描述一张配合文案的写实视觉图。
+      - tags: 3-5 个相关的社交媒体标签。
 
+  # --- Media Studio: 多媒体生成层 ---
   media_studio:
-    image_provider: "stability_ai" # 或 openai
+    provider: "openai"
+    model: "dall-e-3"
     resolution: "1024x1024"
 
+  # --- Publisher: 内容分发层 ---
   publisher:
     platforms: ["telegram", "twitter"]
