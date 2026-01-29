@@ -1,19 +1,14 @@
-# OpenContentBot 全局配置
+# OpenContentBot Global Configuration
 
-# 运行模式: manual (手动输入), auto (自动抓取)
 app_mode: "auto"
-
-# 目标领域
 niche: "finance"
 
-# 1. 流程开关
 pipeline:
   enable_ingestor: true
   enable_image_gen: true
   enable_video_gen: false
-  enable_publisher: false
+  enable_publisher: true
 
-# 2. 模块具体参数
 modules:
   ingestor:
     enable_rss: true
@@ -23,28 +18,48 @@ modules:
       - "https://news.ycombinator.com/rss"
     keywords: ["AI", "Tesla", "Market", "Crypto"]
   
-  # --- Processor: AI 逻辑处理层 ---
   processor:
-    # 彻底解耦：通过此字段决定加载 core/providers/ 下的哪个适配器
-    provider: "openai"  # 可选: "openai", "gemini", "deepseek"
+    provider: "openai"
     model: "gpt-4o-mini"
     temperature: 0.7
-    language: "zh-CN"
+    language: "en"
     
-    # 系统提示词：决定了 AI 的输出格式和灵魂
-    system_prompt: |
-      你是一个全自动社交媒体运营机器人。请根据提供的原始新闻或热点，生成结构化的发布内容。
-      返回格式必须是 JSON，包含以下字段：
-      - caption: 吸引人的推文文案，包含 Emoji 和适当的分段。
-      - image_prompt: 用于 AI 绘画工具（如 DALL-E 或 SD）的英文提示词，描述一张配合文案的写实视觉图。
-      - tags: 3-5 个相关的社交媒体标签。
+    # Target platform for the current run
+    target_platform: "twitter" 
+    
+    # Platform-specific constraints
+    platform_configs:
+      twitter:
+        max_length: 240
+        style: "catchy and concise"
+      instagram:
+        max_length: 1000
+        style: "descriptive and engaging"
+      youtube:
+        max_length: 500
+        style: "informative"
 
-  # --- Media Studio: 多媒体生成层 ---
+    system_prompt: |
+      You are an automated social media manager. Based on the provided news, generate structured content in JSON format.
+      
+      Requirements:
+      1. Platform: {platform}
+      2. Style: {style}
+      3. Character Limit: Under {max_len} characters.
+      4. Content: The "caption" field must NOT include any hashtags.
+      5. Image: The "image_prompt" should be a highly detailed English description for a photorealistic AI image.
+      6. Tags: Provide 3-5 relevant hashtags in the "tags" list.
+
+      Return ONLY a JSON object:
+      {{
+        "caption": "your text here",
+        "image_prompt": "description here",
+        "tags": ["#tag1", "#tag2"]
+      }}
+
   media_studio:
-    provider: "openai"
+    provider: "openai" # Change to "stability" or others later
     model: "dall-e-3"
     resolution: "1024x1024"
-
-  # --- Publisher: 内容分发层 ---
-  publisher:
-    platforms: ["telegram", "twitter"]
+    quality_enhancers: "cinematic lighting, photorealistic, 8k, highly detailed"
+    save_dir: "outputs/images/"
