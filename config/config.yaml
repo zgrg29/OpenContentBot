@@ -19,8 +19,8 @@ modules:
     keywords: ["AI", "Tesla", "Market", "Crypto"]
   
   processor:
-    provider: "openai"
-    model: "gpt-4o-mini"
+    provider: "aliyun"
+    model: "deepseek-r1"
     temperature: 0.7
     language: "en"
     
@@ -58,8 +58,8 @@ modules:
       }}
 
   media_studio:
-    provider: "openai" # Change to "stability" or others later
-    model: "dall-e-3"
-    resolution: "1024x1024"
+    provider: "aliyun" # Using Aliyun Tongyi Wanxiang for image generation
+    model: "wanx-v1"
+    resolution: "1024*1024"
     quality_enhancers: "cinematic lighting, photorealistic, 8k, highly detailed"
     save_dir: "outputs/images/"
