@@ -1,15 +1,20 @@
-# OpenContentBot Global Configuration
+# OpenContentBot Global Configuration V2.0
 
-app_mode: "auto"
-niche: "finance"
+# 基础运行模式配置
+app_mode: "auto"        # auto: 全自动, manual: 生成后需人工确认
+niche: "finance"        # 专注领域：金融、技术、时尚等
+base_language: "en"     # 默认生成语言
 
+# 全局流水线控制开关
 pipeline:
   enable_ingestor: true
   enable_image_gen: true
   enable_video_gen: false
   enable_publisher: true
 
+# 模块详细配置
 modules:
+  # 1. 数据采集模块
   ingestor:
     enable_rss: true
     enable_trends: true
@@ -18,27 +23,13 @@ modules:
       - "https://news.ycombinator.com/rss"
     keywords: ["AI", "Tesla", "Market", "Crypto"]
   
+  # 2. AI 内容生成调度中心
   processor:
-    provider: "openai"
+    provider: "openai"          # 可切换为 openai, gemini, deepseek
     model: "gpt-4o-mini"
     temperature: 0.7
-    language: "en"
     
-    # Target platform for the current run
-    target_platform: "twitter" 
-    
-    # Platform-specific constraints
-    platform_configs:
-      twitter:
-        max_length: 240
-        style: "catchy and concise"
-      instagram:
-        max_length: 1000
-        style: "descriptive and engaging"
-      youtube:
-        max_length: 500
-        style: "informative"
-
+    # 核心指令模板
     system_prompt: |
       You are an automated social media manager. Based on the provided news, generate structured content in JSON format.
       
@@ -51,15 +42,50 @@ modules:
       6. Tags: Provide 3-5 relevant hashtags in the "tags" list.
 
       Return ONLY a JSON object:
-      {{
+      {
         "caption": "your text here",
         "image_prompt": "description here",
         "tags": ["#tag1", "#tag2"]
-      }}
+      }
 
+  # 3. 多媒体生成模块 (Media Studio)
   media_studio:
-    provider: "openai" # Change to "stability" or others later
-    model: "dall-e-3"
-    resolution: "1024x1024"
-    quality_enhancers: "cinematic lighting, photorealistic, 8k, highly detailed"
-    save_dir: "outputs/images/"
+    image:
+      provider: "openai"        # dall-e-3
+      model: "dall-e-3"
+      resolution: "1024x1024"
+      quality_enhancers: "cinematic lighting, photorealistic, 8k, highly detailed"
+      save_dir: "data/output/images/"
+    video:
+      enabled: false            # 目前尚未开启
+      provider: "local"         # 使用 MoviePy 等本地库合成
+      save_dir: "data/output/videos/"
+
+  # 4. 多平台分发渠道适配器 (Publishers)
+  # 这里实现了你要求的 True/False 控制逻辑
+  publish_channels:
+    twitter:
+      enabled: true             # 是否发布到 Twitter
+      post_image: true         # <-- 新增：控制是否发送图片。设为 false 则只发文字
+      max_length: 240
+      style: "catchy and concise"
+      auto_thread: false        # 超过长度是否自动转为推文串
+      api_config: "X_API_KEY"   # 对应 .env 中的变量名
+
+    telegram:
+      enabled: false             # 是否发布到 Telegram
+      chat_id: "@your_channel"  # 目标频道 ID
+      style: "informative and bold"
+      api_config: "TG_BOT_TOKEN"
+
+    instagram:
+      enabled: false            # 暂时关闭
+      max_length: 1000
+      style: "descriptive and engaging"
+      post_type: "feed"         # feed, story, or reels
+      api_config: "IG_CREDENTIALS"
+
+# 路径管理
+paths:
+  log_file: "logs/bot.log"
+  temp_dir: "data/raw/"

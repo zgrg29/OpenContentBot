@@ -9,7 +9,7 @@ def test_media_studio():
     try:
         with open("config/config.yaml", "r", encoding="utf-8") as f:
             full_config = yaml.safe_load(f)
-            media_config = full_config['modules']['media_studio']
+            media_config = full_config['modules']['media_studio']['image']
     except Exception as e:
         print(f"[!] Error loading config: {e}")
         return
