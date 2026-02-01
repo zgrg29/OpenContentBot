@@ -55,15 +55,18 @@ TELEGRAM_CHAT_ID=xxxx...
 # Instagram (Instagrapi) Credentials
 INSTA_USERNAME=your_username
 INSTA_PASSWORD=your_password
+```
 
 ### B. Application Logic (config/config.yaml)
 change rss source
 change keywords
+```
 rss_urls:
   - "[https://techcrunch.com/feed/](https://techcrunch.com/feed/)"
 keywords: ["AI", "Tech", "Startup"]
-    
+```
 change text and image generator
+```
   processor:
     provider: "openai"     # Options: openai, gemini, deepseek
     model: "gpt-4"
@@ -73,8 +76,9 @@ change text and image generator
     image:
       provider: "openai_image" # Options: openai_image, sd_local
       quality_enhancers: "high quality, 4k, cinematic"
-
+```
 change publish_channels
+```
   publish_channels:
     twitter:
       enabled: true
@@ -82,3 +86,4 @@ change publish_channels
       enabled: false
     instagram:
       enabled: true
+```
