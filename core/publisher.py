@@ -27,7 +27,7 @@ class PublishManager:
                     # 传入该平台的特定配置进行初始化
                     self.active_publishers[platform] = publisher_class(settings)
                     logger.info(f"成功加载发布器: {platform}")
-                except (Import_ModuleError, AttributeError) as e:
+                except (ImportError, AttributeError) as e:
                     logger.error(f"无法加载平台 {platform} 的发布模块: {e}")
 
     def broadcast(self, content_bundle):
